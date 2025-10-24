@@ -159,18 +159,18 @@ Transcript converter will then automatically create the captions end timecode fo
 A caption splits whenever text exceeds max characters or lines per caption, and each split shares the original duration equally.
 """)
 
+# -----------------------
 # Sidebar
+# -----------------------
 st.sidebar.header("Settings / Export Options")
 max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
 max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
 caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
 export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
-""")
-max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
-max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
-caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
-export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
-""")
+
+# -----------------------
+# File upload & conversion
+# -----------------------
 uploaded_file = st.file_uploader("Upload transcript file", type=["txt", "srt", "log"])
 
 if uploaded_file:
@@ -199,3 +199,4 @@ if uploaded_file:
             st.success(f"File generated: {file_name_out} — {len(output_text.splitlines())} total lines.")
         except Exception as e:
             st.error(f"Conversion error: {e}")
+
