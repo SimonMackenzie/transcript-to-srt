@@ -120,7 +120,7 @@ def convert_to_srt(file_content_bytes, file_name,
 # Streamlit UI
 # -----------------------
 st.set_page_config(page_title="Transcript → SRT", layout="wide")
-st.title("🎬 Transcript to SRT Converter")
+st.title("🎬 TXT to SRT Converter")
 
 st.markdown("""
 Upload your plain-text transcript file (.txt) with lines like:
@@ -130,7 +130,7 @@ Upload your plain-text transcript file (.txt) with lines like:
 [13:48:13.02] Rolling.
 
 
-Subtitle converter will then automatically create a caption end timecode for you using the next start time − 1 frame as the end time.
+Subtitle converter will then automatically create the caption end timecode for you using the next start time − 1 frame as the end time.
 """)
 
 # Sidebar controls
