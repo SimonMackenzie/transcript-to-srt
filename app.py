@@ -161,11 +161,10 @@ A caption splits whenever text exceeds max characters or lines per caption, and 
 
 # Sidebar
 st.sidebar.header("Settings / Export Options")
-st.sidebar.markdown("""
-**Max characters per line:** Controls when text wraps to a new line.  
-**Max lines per caption:** Controls when wrapped text splits into a new caption.  
-**Default caption length (s):** Used when last caption has no next start time.  
-**Export for Avid Media Composer:** Formats output with Avid header/footer and HH:MM:SS:FF timecodes.
+max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
+max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
+caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
+export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
 """)
 max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
 max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
