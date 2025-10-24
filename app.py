@@ -167,20 +167,15 @@ A caption splits whenever text exceeds max characters or lines per caption, and 
 # -----------------------
 st.sidebar.header("Settings / Export Options")
 
-# CSS to style sidebar sliders green and checkbox font
-st.sidebar.markdown(
+# Global slider color and checkbox font size
+st.markdown(
     """
     <style>
-    /* Slider track color */
-    .stSlider .css-1aumxhk .rc-slider-track {
-        background-color: #28a745 !important;
+    /* Change all sliders to green */
+    :root {
+        --accent-color: #28a745;
     }
-    /* Slider handle color */
-    .stSlider .css-1aumxhk .rc-slider-handle {
-        border-color: #28a745 !important;
-        background-color: #28a745 !important;
-    }
-    /* Checkbox font size */
+    /* Reduce checkbox font size to match sliders */
     div[data-baseweb="checkbox"] label {
         font-size: 0.875rem;
     }
@@ -207,6 +202,7 @@ st.sidebar.markdown(
     '</div>',
     unsafe_allow_html=True
 )
+
 
 # -----------------------
 # File upload & conversion
