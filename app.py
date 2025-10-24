@@ -172,6 +172,18 @@ caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
 export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
 
 # -----------------------
+# Sidebar footer (clickable link)
+# -----------------------
+st.sidebar.markdown(
+    """
+    <div style='position: fixed; bottom: 10px; width: 90%;'>
+    Created by film editor <a href="https://www.simonmackenzie.tv/" style="text-decoration: underline;" target="_blank">Simon Mackenzie</a>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# -----------------------
 # File upload & conversion
 # -----------------------
 uploaded_file = st.file_uploader("Upload transcript file", type=["txt", "srt", "log"])
