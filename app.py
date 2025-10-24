@@ -167,19 +167,22 @@ A caption splits whenever text exceeds max characters or lines per caption, and 
 # -----------------------
 st.sidebar.header("Settings / Export Options")
 
-# Sliders
-max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
-max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
-caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
-
-# Checkbox (Avid export)
-export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
-
-# CSS to reduce font size of sidebar checkboxes to match sliders
+# CSS to style sidebar sliders green
 st.sidebar.markdown(
     """
     <style>
-    /* Target the checkbox labels in sidebar */
+    /* Green slider track */
+    div[data-baseweb="slider"] .rc-slider-track {
+        background-color: #28a745 !important;
+    }
+    /* Green slider handle */
+    div[data-baseweb="slider"] .rc-slider-handle {
+        border-color: #28a745 !important;
+    }
+    div[data-baseweb="slider"] .rc-slider-handle:hover {
+        border-color: #28a745 !important;
+    }
+    /* Checkbox font size */
     div[data-baseweb="checkbox"] label {
         font-size: 0.875rem;
     }
@@ -187,6 +190,14 @@ st.sidebar.markdown(
     """,
     unsafe_allow_html=True
 )
+
+# Sliders
+max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
+max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
+caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
+
+# Checkbox (Avid export)
+export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
 
 # Spacer to push footer toward bottom
 st.sidebar.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
