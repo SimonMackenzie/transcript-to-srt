@@ -130,7 +130,7 @@ Upload your plain-text transcript file (.txt) with lines like:
 [13:48:13.02] Rolling.
 
 
-Transcript converter will then automatically create the captions end timecode for you using the next start timecode − 1 frame as the end time.
+Transcript converter will then automatically create the captions end timecode for you using the next start timecode − 1 frame.
 """)
 
 # Sidebar controls
