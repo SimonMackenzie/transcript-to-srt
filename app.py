@@ -8,12 +8,10 @@ import re
 def drop_frame_adjust(time_in_seconds, fps):
     if fps not in [29.97, 59.94]:
         return timedelta(seconds=time_in_seconds)
-
     total_frames = round(time_in_seconds * fps)
     drop_frames = 2 if fps == 29.97 else 4
     frames_per_10_minutes = round(fps * 60 * 10)
     frames_per_minute = round(fps * 60)
-
     d = total_frames // frames_per_10_minutes
     m = total_frames % frames_per_10_minutes
     dropped = drop_frames * (9 * d + max(0, (m - drop_frames) // (frames_per_minute - drop_frames)))
@@ -32,6 +30,15 @@ def parse_timecode(tc):
 
 def fmt_srt(dt):
     return dt.strftime("%H:%M:%S,%f")[:-3]
+
+def frames_from_timedelta(td, fps):
+    total_seconds = td.total_seconds()
+    total_frames = round(total_seconds * fps)
+    hours = int(total_frames // (3600*fps))
+    minutes = int((total_frames % (3600*fps)) // (60*fps))
+    seconds = int((total_frames % (60*fps)) // 1)
+    frames = int(total_frames % fps)
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}:{frames:02d}"
 
 def wrap_text_to_lines(text, max_chars):
     words = text.split()
@@ -55,6 +62,7 @@ def convert_to_srt(file_content_bytes, file_name,
                    default_last_duration=3,
                    max_chars_per_line=42,
                    max_lines_per_caption=2,
+                   export_avid=False,
                    custom_suffix="_converted"):
     fps = detect_framerate(file_name)
     content = file_content_bytes.decode("utf-8")
@@ -106,20 +114,36 @@ def convert_to_srt(file_content_bytes, file_name,
                 "text": text_block
             })
 
-    srt_lines = []
-    for idx, e in enumerate(srt_entries, start=1):
-        srt_lines.append(f"{idx}\n{fmt_srt(e['start_dt'])} --> {fmt_srt(e['end_dt'])}\n{e['text']}\n")
-
-    srt_text = "\n".join(srt_lines)
-    preview = "\n".join(srt_lines[:5]) + ("\n...\n" if len(srt_lines) > 5 else "")
-    srt_file_name = file_name.rsplit(".", 1)[0] + custom_suffix + ".srt"
-
-    return srt_text, preview, srt_file_name, fps
+    if export_avid:
+        avid_lines = [
+            "@ This file written with the Avid Caption plugin, version 1",
+            "",
+            "<begin subtitles>"
+        ]
+        for e in srt_entries:
+            start_fc = frames_from_timedelta(e["start_dt"] - datetime(1900,1,1), fps)
+            end_fc = frames_from_timedelta(e["end_dt"] - datetime(1900,1,1), fps)
+            text_clean = e["text"].replace("\n", " ")
+            avid_lines.append(f"{start_fc} {end_fc} {text_clean}")
+        avid_lines.append("")
+        avid_lines.append("<end subtitles>")
+        avid_text = "\n".join(avid_lines)
+        preview = "\n".join(avid_lines[2:7]) + ("\n...\n" if len(avid_lines) > 7 else "")
+        file_name_out = file_name.rsplit(".",1)[0] + "_avid.txt"
+        return avid_text, preview, file_name_out, fps
+    else:
+        srt_lines = []
+        for idx, e in enumerate(srt_entries, start=1):
+            srt_lines.append(f"{idx}\n{fmt_srt(e['start_dt'])} --> {fmt_srt(e['end_dt'])}\n{e['text']}\n")
+        srt_text = "\n".join(srt_lines)
+        preview = "\n".join(srt_lines[:5]) + ("\n...\n" if len(srt_lines) > 5 else "")
+        srt_file_name = file_name.rsplit(".", 1)[0] + custom_suffix + ".srt"
+        return srt_text, preview, srt_file_name, fps
 
 # -----------------------
 # Streamlit UI
 # -----------------------
-st.set_page_config(page_title="Transcript → SRT", layout="wide")
+st.set_page_config(page_title="🎬 TXT to SRT Converter", layout="wide")
 st.title("🎬 TXT to SRT Converter")
 
 st.markdown("""
@@ -133,39 +157,46 @@ Upload your plain-text transcript file (.txt) with lines like:
 Transcript converter will then automatically create the captions end timecode for you using the next start timecode − 1 frame.
 
 A caption splits whenever text exceeds max characters or lines per caption, and each split shares the original duration equally.
-
 """)
 
-# Sidebar controls
-st.sidebar.header("Settings")
+# Sidebar
+st.sidebar.header("Settings / Export Options")
+st.sidebar.markdown("""
+**Max characters per line:** Controls when text wraps to a new line.  
+**Max lines per caption:** Controls when wrapped text splits into a new caption.  
+**Default caption length (s):** Used when last caption has no next start time.  
+**Export for Avid Media Composer:** Formats output with Avid header/footer and HH:MM:SS:FF timecodes.
+""")
 max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
 max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
 caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
+export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
 
 uploaded_file = st.file_uploader("Upload transcript file", type=["txt", "srt", "log"])
 
 if uploaded_file:
     st.write(f"**Detected frame rate (from filename):** {detect_framerate(uploaded_file.name)} fps")
-    if st.button("Convert to SRT"):
+    if st.button("Convert"):
         try:
-            srt_text, preview, srt_file_name, fps = convert_to_srt(
+            output_text, preview, file_name_out, fps = convert_to_srt(
                 uploaded_file.read(),
                 uploaded_file.name,
                 default_last_duration=caption_len_default,
                 max_chars_per_line=max_chars,
-                max_lines_per_caption=max_lines
+                max_lines_per_caption=max_lines,
+                export_avid=export_avid
             )
 
-            st.subheader("🔍 Preview (first 5 captions):")
+            st.subheader("🔍 Preview (first 5 lines):")
             st.code(preview, language="")
 
             st.download_button(
-                label="⬇️ Download SRT",
-                data=srt_text,
-                file_name=srt_file_name,
+                label="⬇️ Download",
+                data=output_text,
+                file_name=file_name_out,
                 mime="text/plain"
             )
 
-            st.success(f"SRT generated: {srt_file_name} — {len(srt_text.splitlines())} total lines.")
+            st.success(f"File generated: {file_name_out} — {len(output_text.splitlines())} total lines.")
         except Exception as e:
             st.error(f"Conversion error: {e}")
