@@ -126,6 +126,7 @@ st.markdown("""
 Upload your plain-text transcript file (.txt) with lines like:
 
 [13:48:11.12] Camera rolling.
+
 [13:48:13.02] Rolling.
 
 
