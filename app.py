@@ -175,9 +175,11 @@ export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
 # Spacer to push footer to bottom
 st.sidebar.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
 
-# Footer at bottom of sidebar, left-aligned
+# Footer at bottom of sidebar, left-aligned, smaller font
 st.sidebar.markdown(
-    '<div style="text-align: left;">Created by film editor <a href="https://www.simonmackenzie.tv/" style="text-decoration: underline;" target="_blank">Simon Mackenzie</a></div>',
+    '<div style="text-align: left; font-size: 0.875rem;">'
+    'Created by film editor <a href="https://www.simonmackenzie.tv/" style="text-decoration: underline;" target="_blank">Simon Mackenzie</a>'
+    '</div>',
     unsafe_allow_html=True
 )
 
