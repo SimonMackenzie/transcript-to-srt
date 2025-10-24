@@ -157,9 +157,7 @@ kidding! How?
 [13:48:13.02] Quiet down will ya! You got a mouth
 bigger than a meteor crater!
 
-Transcript converter will then automatically create the captions end timecode for you using the next start timecode − 1 frame, and create a .srt file for you.
-
-A caption splits whenever text exceeds max characters or lines per caption, and each split shares the original duration equally.
+Transcript converter will then automatically create the captions end timecode for you using the next start timecode − 1 frame, and creates a .srt file for you.
 """)
 
 # -----------------------
@@ -171,6 +169,13 @@ st.sidebar.header("Settings / Export Options")
 max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
 max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
 caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
+
+# Informational text below sliders
+st.sidebar.markdown(
+    "A caption splits whenever text exceeds max characters or lines per caption, "
+    "and each split shares the original duration equally.",
+    unsafe_allow_html=True
+)
 
 # Checkbox (Avid export)
 export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
