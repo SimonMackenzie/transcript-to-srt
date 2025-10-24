@@ -166,14 +166,18 @@ A caption splits whenever text exceeds max characters or lines per caption, and 
 # Sidebar
 # -----------------------
 st.sidebar.header("Settings / Export Options")
+
 max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
 max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
 caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
 export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
 
-# Sidebar footer (clickable, underlined, matches sidebar font)
+# Spacer to push footer to bottom
+st.sidebar.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
+
+# Footer at bottom of sidebar
 st.sidebar.markdown(
-    'Created by film editor <a href="https://www.simonmackenzie.tv/" style="text-decoration: underline;" target="_blank">Simon Mackenzie</a>',
+    '<div style="text-align: center;">Created by film editor <a href="https://www.simonmackenzie.tv/" style="text-decoration: underline;" target="_blank">Simon Mackenzie</a></div>',
     unsafe_allow_html=True
 )
 
