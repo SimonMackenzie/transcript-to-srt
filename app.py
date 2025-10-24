@@ -167,23 +167,6 @@ A caption splits whenever text exceeds max characters or lines per caption, and 
 # -----------------------
 st.sidebar.header("Settings / Export Options")
 
-# Global slider color and checkbox font size
-st.markdown(
-    """
-    <style>
-    /* Change all sliders to green */
-    :root {
-        --accent-color: #28a745;
-    }
-    /* Reduce checkbox font size to match sliders */
-    div[data-baseweb="checkbox"] label {
-        font-size: 0.875rem;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 # Sliders
 max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
 max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
@@ -191,6 +174,18 @@ caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
 
 # Checkbox (Avid export)
 export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
+
+# CSS to reduce checkbox font size to match sliders
+st.sidebar.markdown(
+    """
+    <style>
+    div[data-baseweb="checkbox"] label {
+        font-size: 0.875rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # Spacer to push footer toward bottom
 st.sidebar.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
@@ -202,7 +197,6 @@ st.sidebar.markdown(
     '</div>',
     unsafe_allow_html=True
 )
-
 
 # -----------------------
 # File upload & conversion
