@@ -131,6 +131,9 @@ Upload your plain-text transcript file (.txt) with lines like:
 
 
 Transcript converter will then automatically create the captions end timecode for you using the next start timecode − 1 frame.
+
+A caption will split when the wrapped text exceeds the maximum lines per caption.
+
 """)
 
 # Sidebar controls
