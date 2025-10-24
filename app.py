@@ -170,7 +170,7 @@ max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
 max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
 caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
 export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
-
+""")
 uploaded_file = st.file_uploader("Upload transcript file", type=["txt", "srt", "log"])
 
 if uploaded_file:
