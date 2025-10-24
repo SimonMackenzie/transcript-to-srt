@@ -88,4 +88,80 @@ def convert_to_srt(file_content_bytes, file_name,
 
     srt_entries = []
     for seg in segments:
-        lin
+        lines = wrap_text_to_lines(seg["text"], max_chars_per_line)
+        grouped = [lines[i:i+max_lines_per_caption] for i in range(0, len(lines), max_lines_per_caption)]
+        n_parts = len(grouped)
+        part_duration = seg["duration_s"] / n_parts if n_parts > 0 else seg["duration_s"]
+        for p_idx, group_lines in enumerate(grouped):
+            part_start = seg["start_s"] + p_idx * part_duration
+            part_end = seg["start_s"] + (p_idx + 1) * part_duration - (1.0 / fps)
+            if part_end <= part_start:
+                part_end = part_start + max(0.001, part_duration)
+            start_dt_adj = datetime(1900,1,1) + drop_frame_adjust(part_start, fps)
+            end_dt_adj = datetime(1900,1,1) + drop_frame_adjust(part_end, fps)
+            text_block = "\n".join(group_lines)
+            srt_entries.append({
+                "start_dt": start_dt_adj,
+                "end_dt": end_dt_adj,
+                "text": text_block
+            })
+
+    srt_lines = []
+    for idx, e in enumerate(srt_entries, start=1):
+        srt_lines.append(f"{idx}\n{fmt_srt(e['start_dt'])} --> {fmt_srt(e['end_dt'])}\n{e['text']}\n")
+
+    srt_text = "\n".join(srt_lines)
+    preview = "\n".join(srt_lines[:5]) + ("\n...\n" if len(srt_lines) > 5 else "")
+    srt_file_name = file_name.rsplit(".", 1)[0] + custom_suffix + ".srt"
+
+    return srt_text, preview, srt_file_name, fps
+
+# -----------------------
+# Streamlit UI
+# -----------------------
+st.set_page_config(page_title="Transcript → SRT", layout="wide")
+st.title("🎬 Transcript to SRT Converter")
+
+st.markdown("""
+Upload your plain-text transcript file (.txt) with lines like:
+
+[13:48:11.12] Camera rolling.
+[13:48:13.02] Rolling.
+
+
+Subtitle converter will then automatically create a caption end timecode for you using the next start time − 1 frame as the end time.
+""")
+
+# Sidebar controls
+st.sidebar.header("Settings")
+max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
+max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
+caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
+
+uploaded_file = st.file_uploader("Upload transcript file", type=["txt", "srt", "log"])
+
+if uploaded_file:
+    st.write(f"**Detected frame rate (from filename):** {detect_framerate(uploaded_file.name)} fps")
+    if st.button("Convert to SRT"):
+        try:
+            srt_text, preview, srt_file_name, fps = convert_to_srt(
+                uploaded_file.read(),
+                uploaded_file.name,
+                default_last_duration=caption_len_default,
+                max_chars_per_line=max_chars,
+                max_lines_per_caption=max_lines
+            )
+
+            st.subheader("🔍 Preview (first 5 captions):")
+            st.code(preview, language="")
+
+            st.download_button(
+                label="⬇️ Download SRT",
+                data=srt_text,
+                file_name=srt_file_name,
+                mime="text/plain"
+            )
+
+            st.success(f"SRT generated: {srt_file_name} — {len(srt_text.splitlines())} total lines.")
+        except Exception as e:
+            st.error(f"Conversion error: {e}")
