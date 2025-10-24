@@ -145,8 +145,8 @@ def convert_to_srt(file_content_bytes, file_name,
 # -----------------------
 # Streamlit UI
 # -----------------------
-st.set_page_config(page_title="🎬 TXT to SRT Converter", layout="wide")
-st.title("🎬 TXT to SRT Converter")
+st.set_page_config(page_title="TXT to SRT Converter", layout="wide")
+st.title("TXT to SRT Converter")
 
 st.markdown("""
 Upload your plain-text transcript file (.txt) with lines like:
