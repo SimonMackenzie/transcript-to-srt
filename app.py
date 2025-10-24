@@ -177,10 +177,10 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
-# Checkbox (Avid export)
-export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
+# Checkbox for Avid Media Composer (hidden for now)
+# export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
 
-# CSS to reduce checkbox font size to match sliders
+# CSS to reduce checkbox font size (kept in case you enable it later)
 st.sidebar.markdown(
     """
     <style>
