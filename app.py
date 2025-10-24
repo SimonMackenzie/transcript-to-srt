@@ -167,20 +167,19 @@ A caption splits whenever text exceeds max characters or lines per caption, and 
 # -----------------------
 st.sidebar.header("Settings / Export Options")
 
+# Sliders
 max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
 max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
 caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
 
-# Smaller font checkbox for Avid export
-export_avid = st.sidebar.checkbox(
-    label='<span style="font-size:0.875rem;">Export for Avid Media Composer</span>',
-    value=False,
-    key="export_avid",
-)
-st.markdown(
+# Checkbox (Avid export)
+export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
+
+# CSS to reduce font size of sidebar checkboxes to match sliders
+st.sidebar.markdown(
     """
     <style>
-    /* Ensure the checkbox label respects the small font */
+    /* Target the checkbox labels in sidebar */
     div[data-baseweb="checkbox"] label {
         font-size: 0.875rem;
     }
@@ -192,7 +191,7 @@ st.markdown(
 # Spacer to push footer toward bottom
 st.sidebar.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
 
-# Footer at bottom of sidebar, left-aligned, smaller font
+# Footer at bottom of sidebar, left-aligned, small font
 st.sidebar.markdown(
     '<div style="text-align: left; font-size: 0.875rem;">'
     'Created by film editor <a href="https://www.simonmackenzie.tv/" style="text-decoration: underline;" target="_blank">Simon Mackenzie</a>'
