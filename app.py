@@ -171,15 +171,9 @@ max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
 caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
 export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
 
-# -----------------------
-# Sidebar footer (clickable link)
-# -----------------------
+# Sidebar footer (clickable, underlined, matches sidebar font)
 st.sidebar.markdown(
-    """
-    <div style='position: fixed; bottom: 10px; width: 90%;'>
-    Created by film editor <a href="https://www.simonmackenzie.tv/" style="text-decoration: underline;" target="_blank">Simon Mackenzie</a>
-    </div>
-    """,
+    'Created by film editor <a href="https://www.simonmackenzie.tv/" style="text-decoration: underline;" target="_blank">Simon Mackenzie</a>',
     unsafe_allow_html=True
 )
 
