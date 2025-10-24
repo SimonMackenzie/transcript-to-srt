@@ -151,13 +151,11 @@ st.title("🎬 TXT to SRT Converter")
 st.markdown("""
 Upload your plain-text transcript file (.txt) with lines like:
 
-[13:48:11.12] What have you done with those
-plans?
+[13:48:11.12] Join the Rebellion?! Are you
+kidding! How?
 
-[13:48:13.02] We intercepted no transmissions.
-Aaah... This is a consular ship.
-Were on a diplomatic mission.
-
+[13:48:13.02] Quiet down will ya! You got a mouth
+bigger than a meteor crater!
 
 Transcript converter will then automatically create the captions end timecode for you using the next start timecode − 1 frame.
 
