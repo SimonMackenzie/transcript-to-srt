@@ -170,9 +170,26 @@ st.sidebar.header("Settings / Export Options")
 max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
 max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
 caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
-export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
 
-# Spacer to push footer to bottom
+# Smaller font checkbox for Avid export
+export_avid = st.sidebar.checkbox(
+    label='<span style="font-size:0.875rem;">Export for Avid Media Composer</span>',
+    value=False,
+    key="export_avid",
+)
+st.markdown(
+    """
+    <style>
+    /* Ensure the checkbox label respects the small font */
+    div[data-baseweb="checkbox"] label {
+        font-size: 0.875rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Spacer to push footer toward bottom
 st.sidebar.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
 
 # Footer at bottom of sidebar, left-aligned, smaller font
