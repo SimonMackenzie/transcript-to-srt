@@ -33,11 +33,12 @@ def fmt_srt(dt):
 
 def frames_from_timedelta(td, fps):
     total_seconds = td.total_seconds()
-    total_frames = round(total_seconds * fps)
-    hours = int(total_frames // (3600*fps))
-    minutes = int((total_frames % (3600*fps)) // (60*fps))
-    seconds = int((total_frames % (60*fps)) // 1)
-    frames = int(total_frames % fps)
+    hours = int(total_seconds // 3600)
+    minutes = int((total_seconds % 3600) // 60)
+    seconds = int(total_seconds % 60)
+    frames = round((total_seconds - int(total_seconds)) * fps)
+    if frames >= fps:
+        frames = int(fps - 1)
     return f"{hours:02d}:{minutes:02d}:{seconds:02d}:{frames:02d}"
 
 def wrap_text_to_lines(text, max_chars):
@@ -131,13 +132,14 @@ def convert_to_srt(file_content_bytes, file_name,
         preview = "\n".join(avid_lines[2:7]) + ("\n...\n" if len(avid_lines) > 7 else "")
         file_name_out = file_name.rsplit(".",1)[0] + "_avid.txt"
         return avid_text, preview, file_name_out, fps
+
     else:
         srt_lines = []
         for idx, e in enumerate(srt_entries, start=1):
             srt_lines.append(f"{idx}\n{fmt_srt(e['start_dt'])} --> {fmt_srt(e['end_dt'])}\n{e['text']}\n")
         srt_text = "\n".join(srt_lines)
         preview = "\n".join(srt_lines[:5]) + ("\n...\n" if len(srt_lines) > 5 else "")
-        srt_file_name = file_name.rsplit(".", 1)[0] + custom_suffix + ".srt"
+        srt_file_name = file_name.rsplit(".", 1)[0] + "_converted.srt"
         return srt_text, preview, srt_file_name, fps
 
 # -----------------------
