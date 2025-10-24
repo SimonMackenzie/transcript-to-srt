@@ -157,7 +157,7 @@ kidding! How?
 [13:48:13.02] Quiet down will ya! You got a mouth
 bigger than a meteor crater!
 
-Transcript converter will then automatically create the captions end timecode for you using the next start timecode − 1 frame, and creates a .srt file for you.
+Transcript converter will then auto create each captions end timecode for you using the next start timecode − 1 frame and supply an .srt file for you.
 """)
 
 # -----------------------
