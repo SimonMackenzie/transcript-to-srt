@@ -157,7 +157,7 @@ kidding! How?
 [13:48:13.02] Quiet down will ya! You got a mouth
 bigger than a meteor crater!
 
-Transcript converter will then automatically create the captions end timecode for you using the next start timecode − 1 frame.
+Transcript converter will then automatically create the captions end timecode for you using the next start timecode − 1 frame, and create a .srt file for you.
 
 A caption splits whenever text exceeds max characters or lines per caption, and each split shares the original duration equally.
 """)
