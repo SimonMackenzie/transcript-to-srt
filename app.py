@@ -31,16 +31,6 @@ def parse_timecode(tc):
 def fmt_srt(dt):
     return dt.strftime("%H:%M:%S,%f")[:-3]
 
-def frames_from_timedelta(td, fps):
-    total_seconds = td.total_seconds()
-    hours = int(total_seconds // 3600)
-    minutes = int((total_seconds % 3600) // 60)
-    seconds = int(total_seconds % 60)
-    frames = round((total_seconds - int(total_seconds)) * fps)
-    if frames >= fps:
-        frames = int(fps - 1)
-    return f"{hours:02d}:{minutes:02d}:{seconds:02d}:{frames:02d}"
-
 def wrap_text_to_lines(text, max_chars):
     words = text.split()
     if not words:
@@ -63,7 +53,6 @@ def convert_to_srt(file_content_bytes, file_name,
                    default_last_duration=3,
                    max_chars_per_line=42,
                    max_lines_per_caption=2,
-                   export_avid=False,
                    custom_suffix="_converted"):
     fps = detect_framerate(file_name)
     content = file_content_bytes.decode("utf-8")
@@ -115,32 +104,14 @@ def convert_to_srt(file_content_bytes, file_name,
                 "text": text_block
             })
 
-    if export_avid:
-        avid_lines = [
-            "@ This file written with the Avid Caption plugin, version 1",
-            "",
-            "<begin subtitles>"
-        ]
-        for e in srt_entries:
-            start_fc = frames_from_timedelta(e["start_dt"] - datetime(1900,1,1), fps)
-            end_fc = frames_from_timedelta(e["end_dt"] - datetime(1900,1,1), fps)
-            text_clean = e["text"].replace("\n", " ")
-            avid_lines.append(f"{start_fc} {end_fc} {text_clean}")
-        avid_lines.append("")
-        avid_lines.append("<end subtitles>")
-        avid_text = "\n".join(avid_lines)
-        preview = "\n".join(avid_lines[2:7]) + ("\n...\n" if len(avid_lines) > 7 else "")
-        file_name_out = file_name.rsplit(".",1)[0] + "_avid.txt"
-        return avid_text, preview, file_name_out, fps
-
-    else:
-        srt_lines = []
-        for idx, e in enumerate(srt_entries, start=1):
-            srt_lines.append(f"{idx}\n{fmt_srt(e['start_dt'])} --> {fmt_srt(e['end_dt'])}\n{e['text']}\n")
-        srt_text = "\n".join(srt_lines)
-        preview = "\n".join(srt_lines[:5]) + ("\n...\n" if len(srt_lines) > 5 else "")
-        srt_file_name = file_name.rsplit(".", 1)[0] + "_converted.srt"
-        return srt_text, preview, srt_file_name, fps
+    # Only SRT export now
+    srt_lines = []
+    for idx, e in enumerate(srt_entries, start=1):
+        srt_lines.append(f"{idx}\n{fmt_srt(e['start_dt'])} --> {fmt_srt(e['end_dt'])}\n{e['text']}\n")
+    srt_text = "\n".join(srt_lines)
+    preview = "\n".join(srt_lines[:5]) + ("\n...\n" if len(srt_lines) > 5 else "")
+    srt_file_name = file_name.rsplit(".", 1)[0] + "_converted.srt"
+    return srt_text, preview, srt_file_name, fps
 
 # -----------------------
 # Streamlit UI
@@ -170,32 +141,14 @@ max_chars = st.sidebar.slider("Max characters per line", 20, 80, 42)
 max_lines = st.sidebar.slider("Max lines per caption", 1, 4, 2)
 caption_len_default = st.sidebar.slider("Default caption length (s)", 1, 10, 3)
 
-# Informational text below sliders
 st.sidebar.markdown(
     "A caption splits whenever text exceeds max characters or lines per caption, "
     "and each split shares the original duration equally.",
     unsafe_allow_html=True
 )
 
-# Checkbox for Avid Media Composer (hidden for now)
-# export_avid = st.sidebar.checkbox("Export for Avid Media Composer")
-
-# CSS to reduce checkbox font size (kept in case you enable it later)
-st.sidebar.markdown(
-    """
-    <style>
-    div[data-baseweb="checkbox"] label {
-        font-size: 0.875rem;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# Spacer to push footer toward bottom
+# Spacer and footer
 st.sidebar.markdown("<br><br><br><br><br><br>", unsafe_allow_html=True)
-
-# Footer at bottom of sidebar, left-aligned, small font
 st.sidebar.markdown(
     '<div style="text-align: left; font-size: 0.875rem;">'
     'Created by film editor <a href="https://www.simonmackenzie.tv/" style="text-decoration: underline;" target="_blank">Simon Mackenzie</a>'
@@ -217,8 +170,7 @@ if uploaded_file:
                 uploaded_file.name,
                 default_last_duration=caption_len_default,
                 max_chars_per_line=max_chars,
-                max_lines_per_caption=max_lines,
-                export_avid=export_avid
+                max_lines_per_caption=max_lines
             )
 
             st.subheader("🔍 Preview (first 5 lines):")
@@ -234,4 +186,3 @@ if uploaded_file:
             st.success(f"File generated: {file_name_out} — {len(output_text.splitlines())} total lines.")
         except Exception as e:
             st.error(f"Conversion error: {e}")
-
